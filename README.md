@@ -16,7 +16,7 @@ A Toronto open-data case study, January 2025 through August 2026. This is an ana
 
 ## Method
 
-1. Download the two source CSVs and preserve their original `_id` values in `data/`. The checked-in snapshot was retrieved **September 25, 2026**. A SHA-256 of each download prints when the build runs. The analysis has an inclusive cutoff at **August 31, 2026**, so a later feed update will not silently add September records.
+1. Download the two source CSVs and preserve their original `_id` values in `data/`. The analyzed source snapshot was retrieved **September 25, 2026**. A SHA-256 of each download prints when the build runs. The analysis has an inclusive cutoff at **August 31, 2026**, so a later feed update will not silently add September records.
 2. Parse dates, incident hours and numeric delay/gap fields. Standardize line labels only for `YU` (Line 1), `BD` (Line 2), and `SHP` (Line 4). Keep zero-minute records in the incident table, but use positive-delay records when ranking incidents by duration. Exclude 811 rows with missing, combined or off-network line labels from line-level analysis rather than allocating them to a line by guesswork. Preserve their audit count.
 3. Create an `incidents` fact table and a `delay_codes` lookup table in SQLite. SQL joins the lookup, uses CTEs for grouped summaries, and window functions for within-line ranks and same-month year-over-year comparison. `sql/analysis.sql` holds all six queries; `data/results.md` holds their actual output.
 4. Plot monthly delay minutes by line and positive records by hour. Station names are left as reported: aliasing them without a maintained station map could merge different operational locations. There are 68 rows that look alike across several fields, but have distinct source IDs, so I did not drop them as duplicates.
@@ -27,12 +27,12 @@ Run locally with Python 3.10+:
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python src/build.py                 # use checked-in source snapshot
+python src/build.py                 # download on first run, then reuse cached CSVs
 python -m pytest -q                 # optional, after installing pytest
 python src/build.py --refresh       # fetch latest; result may differ as source updates
 ```
 
-The SQLite database is generated at `data/ttc_analysis.sqlite` and ignored by Git. Both downloaded raw CSV snapshots are committed, so the default run does not require a live API and recreates the results and charts. The current SQL uses SQLite, not an enterprise warehouse; adapting it to PostgreSQL would require minor date/string function changes.
+The SQLite database is generated at `data/ttc_analysis.sqlite` and ignored by Git. Raw CSV files are downloaded on the first run and cached locally; a live connection to the City resource is needed on that first run. The cutoff keeps newer rows out, but the publisher may revise old rows. The result tables and charts in this repo are from the September 25 snapshot. The current SQL uses SQLite, not an enterprise warehouse; adapting it to PostgreSQL would require minor date/string function changes.
 
 ## Limits and follow-up
 
