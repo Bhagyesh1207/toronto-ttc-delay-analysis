@@ -1,6 +1,5 @@
 """Download City of Toronto TTC data and build a reproducible SQLite analysis."""
 import argparse
-import csv
 import hashlib
 import sqlite3
 from pathlib import Path
@@ -81,12 +80,12 @@ def build():
    ax.plot(pd.to_datetime(g.month),g.minutes,marker='o',markersize=3,label=line,linewidth=2)
   ax.set_title('Recorded subway delay minutes by month',loc='left',fontsize=17,fontweight='bold',pad=18)
   ax.set_ylabel('Minutes recorded');ax.set_xlabel('Month');ax.legend(frameon=False,ncol=3);ax.grid(axis='y',alpha=.2)
-  ax.spines[['top','right']].set_visible(False);fig.autofmt_xdate();fig.tight_layout();fig.savefig(CHARTS/'monthly-delay-minutes.png',dpi=160);plt.close(fig)
+  ax.spines[['top','right']].set_visible(False);fig.autofmt_xdate();fig.tight_layout();fig.savefig(CHARTS/'monthly-delay-minutes.svg',dpi=160);plt.close(fig)
   hourly=pd.read_sql_query('SELECT hour, COUNT(*) incidents, SUM(is_positive_delay) positive_events FROM incidents GROUP BY hour ORDER BY hour',conn)
   fig,ax=plt.subplots(figsize=(10,5));fig.patch.set_facecolor('#f7f8fa');ax.set_facecolor('#f7f8fa')
   ax.bar(hourly.hour,hourly.positive_events,color='#187b99');ax.set_xticks(range(0,24,2));ax.set_ylabel('Positive-delay records');ax.set_xlabel('Recorded hour')
   ax.set_title('Positive-delay records by hour',loc='left',fontsize=17,fontweight='bold',pad=18)
-  ax.spines[['top','right']].set_visible(False);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True);fig.tight_layout();fig.savefig(CHARTS/'hourly-incidents.png',dpi=160);plt.close(fig)
+  ax.spines[['top','right']].set_visible(False);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True);fig.tight_layout();fig.savefig(CHARTS/'hourly-incidents.svg',dpi=160);plt.close(fig)
  print('Wrote',db,DATA/'results.md')
 
 if __name__ == '__main__':
