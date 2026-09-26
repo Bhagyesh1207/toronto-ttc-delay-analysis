@@ -2,7 +2,7 @@
 
 A Toronto open-data case study, January 2025 through August 2026. This is an analysis of **recorded incidents**, not a claim about the chance a passenger is delayed. I use the City of Toronto's [TTC Subway Delay Data](https://open.toronto.ca/dataset/ttc-subway-delay-data/) and its code-description resource, clean them with Python, model them in SQLite, then use SQL to compare lines, stations, causes and months.
 
-![Monthly recorded delay minutes for subway lines 1, 2 and 4](charts/monthly-delay-minutes.png)
+![Monthly recorded delay minutes for subway lines 1, 2 and 4](charts/monthly-delay-minutes.svg)
 
 ## What I found
 
@@ -12,7 +12,7 @@ A Toronto open-data case study, January 2025 through August 2026. This is an ana
 - **January 2026 is unusually high** at 12,366 minutes, versus 6,381 in January 2025. An apparent weather association is plausible from the codes but cannot be proved from this log alone. The month includes a few very large incidents; it should not be taken as a seasonality estimate from just two winters.
 - **Peak hours (07:00-09:59 and 16:00-18:59) have 5,297 positive-delay records**, compared with 10,503 across all other hours. The peak slice covers six hours, not 18, and service levels differ. The SQL also reports the share of logged incidents with positive minutes, but that is not the chance of a delay on a trip.
 
-![Positive-delay records by reported hour](charts/hourly-incidents.png)
+![Positive-delay records by reported hour](charts/hourly-incidents.svg)
 
 ## Method
 
@@ -32,7 +32,7 @@ python -m pytest -q                 # optional, after installing pytest
 python src/build.py --refresh       # fetch latest; result may differ as source updates
 ```
 
-The SQLite database is generated at `data/ttc_analysis.sqlite` and ignored by Git. Raw CSV files are downloaded on the first run and cached locally; a live connection to the City resource is needed on that first run. The cutoff keeps newer rows out, but the publisher may revise old rows. The result tables and charts in this repo are from the September 25 snapshot. The current SQL uses SQLite, not an enterprise warehouse; adapting it to PostgreSQL would require minor date/string function changes.
+The SQLite database is generated at `data/ttc_analysis.sqlite` and ignored by Git. Raw CSV files are downloaded on the first run and cached locally but are not committed to this repo; a live connection to the City resource is needed on that first run. The cutoff keeps newer rows out, but the publisher may revise old rows. The result tables and charts in this repo are from the September 25 snapshot; publisher revisions may change a future run. Re-run the SQL to update them. The current SQL uses SQLite, not an enterprise warehouse; adapting it to PostgreSQL would require minor date/string function changes.
 
 ## Limits and follow-up
 
